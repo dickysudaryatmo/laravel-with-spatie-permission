@@ -9,6 +9,7 @@ use Spatie\Permission\Models\Role;
 use DB;
 use Hash;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
     
 class UserController extends Controller
 {
@@ -19,8 +20,12 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        $getUser = Auth::user();
+        $user = User::find($getUser->id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name','name')->all();
         $data = User::orderBy('id','DESC')->paginate(5);
-        return view('users.index',compact('data'))
+        return view('users.index',compact('data', 'roles', 'userRole'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
     
@@ -57,7 +62,7 @@ class UserController extends Controller
         $user->assignRole($request->input('roles'));
     
         return redirect()->route('users.index')
-                        ->with('success','User created successfully');
+                        ->with('success','Karyawan created successfully');
     }
     
     /**
@@ -99,11 +104,12 @@ class UserController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.$id,
-            'password' => 'same:confirm-password',
+            // 'password' => 'same:confirm-password',
             'roles' => 'required'
         ]);
     
         $input = $request->all();
+
         if(!empty($input['password'])){ 
             $input['password'] = Hash::make($input['password']);
         }else{
@@ -117,7 +123,7 @@ class UserController extends Controller
         $user->assignRole($request->input('roles'));
     
         return redirect()->route('users.index')
-                        ->with('success','User updated successfully');
+                        ->with('success','Karyawan updated successfully');
     }
     
     /**
@@ -130,6 +136,6 @@ class UserController extends Controller
     {
         User::find($id)->delete();
         return redirect()->route('users.index')
-                        ->with('success','User deleted successfully');
+                        ->with('success','Karyawan deleted successfully');
     }
 }
