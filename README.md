@@ -3,6 +3,12 @@
 - run composer install
 - run npm install
 - import tes-agros2.sql
+- run php artisan migrate
+- php artisan db:seed --class=PermissionTableSeeder
+- php artisan db:seed --class=CreateAdminUserSeeder
+- usernya
+- Email: admin@gmail.com
+- Password: 123456
 - create .env sama dengan .env example 
 
 
